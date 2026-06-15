@@ -1,382 +1,376 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Service CRM Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service CRM</title>
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
-    }
+<style>
 
-    body{
-      background:#f4f6f9;
-      display:flex;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
 
-    /* SIDEBAR */
+body{
+display:flex;
+background:#f3f4f6;
+}
 
-    .sidebar{
-      width:250px;
-      height:100vh;
-      background:#111827;
-      color:white;
-      position:fixed;
-      padding:20px;
-    }
+.sidebar{
+width:240px;
+height:100vh;
+background:#111827;
+color:white;
+padding:20px;
+position:fixed;
+}
 
-    .sidebar h2{
-      margin-bottom:30px;
-      text-align:center;
-      color:#00c3ff;
-    }
+.sidebar h2{
+margin-bottom:30px;
+color:#00c3ff;
+}
 
-    .sidebar ul{
-      list-style:none;
-    }
+.sidebar ul{
+list-style:none;
+}
 
-    .sidebar ul li{
-      padding:15px;
-      margin-bottom:10px;
-      border-radius:8px;
-      cursor:pointer;
-      transition:0.3s;
-    }
+.sidebar li{
+padding:15px;
+margin-bottom:10px;
+background:#1f2937;
+border-radius:8px;
+cursor:pointer;
+}
 
-    .sidebar ul li:hover{
-      background:#1f2937;
-    }
+.main{
+margin-left:240px;
+padding:20px;
+width:100%;
+}
 
-    /* MAIN */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
 
-    .main{
-      margin-left:250px;
-      width:100%;
-      padding:20px;
-    }
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
 
-    .header{
-      background:white;
-      padding:20px;
-      border-radius:10px;
-      margin-bottom:20px;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    }
+.card h3{
+margin-bottom:10px;
+}
 
-    .header h1{
-      color:#111827;
-    }
+.card p{
+font-size:28px;
+font-weight:bold;
+}
 
-    /* CARDS */
+.form-section{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:30px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
 
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:20px;
-      margin-bottom:30px;
-    }
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+margin-top:20px;
+}
 
-    .card{
-      background:white;
-      padding:20px;
-      border-radius:10px;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    }
+input, select{
+padding:12px;
+border:1px solid #ccc;
+border-radius:6px;
+width:100%;
+}
 
-    .card h3{
-      margin-bottom:10px;
-      color:#555;
-    }
+button{
+padding:12px 20px;
+background:#2563eb;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+margin-top:20px;
+}
 
-    .card p{
-      font-size:30px;
-      font-weight:bold;
-    }
+button:hover{
+background:#1d4ed8;
+}
 
-    .open{
-      border-left:5px solid red;
-    }
+table{
+width:100%;
+background:white;
+border-collapse:collapse;
+margin-top:20px;
+border-radius:10px;
+overflow:hidden;
+}
 
-    .pending{
-      border-left:5px solid orange;
-    }
+th{
+background:#111827;
+color:white;
+padding:15px;
+text-align:left;
+}
 
-    .progress{
-      border-left:5px solid blue;
-    }
+td{
+padding:15px;
+border-bottom:1px solid #ddd;
+}
 
-    .closed{
-      border-left:5px solid green;
-    }
+.status{
+padding:5px 10px;
+border-radius:5px;
+color:white;
+font-size:12px;
+}
 
-    /* CUSTOMER FORM */
+.open{
+background:red;
+}
 
-    .form-section{
-      background:white;
-      padding:20px;
-      border-radius:10px;
-      margin-bottom:30px;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    }
+.pending{
+background:orange;
+}
 
-    .form-section h2{
-      margin-bottom:20px;
-    }
+.progress{
+background:blue;
+}
 
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:20px;
-    }
+.closed{
+background:green;
+}
 
-    input, select{
-      padding:12px;
-      width:100%;
-      border:1px solid #ccc;
-      border-radius:6px;
-    }
-
-    button{
-      margin-top:20px;
-      padding:12px 20px;
-      background:#2563eb;
-      color:white;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-    }
-
-    button:hover{
-      background:#1e40af;
-    }
-
-    /* TABLE */
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      background:white;
-      border-radius:10px;
-      overflow:hidden;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    table th{
-      background:#111827;
-      color:white;
-      padding:15px;
-      text-align:left;
-    }
-
-    table td{
-      padding:15px;
-      border-bottom:1px solid #ddd;
-    }
-
-    .status{
-      padding:5px 10px;
-      border-radius:5px;
-      color:white;
-      font-size:12px;
-    }
-
-    .status-open{
-      background:red;
-    }
-
-    .status-pending{
-      background:orange;
-    }
-
-    .status-progress{
-      background:blue;
-    }
-
-    .status-closed{
-      background:green;
-    }
-
-  </style>
+</style>
 </head>
 
 <body>
 
-  <!-- SIDEBAR -->
+<div class="sidebar">
+<h2>SERVICE CRM</h2>
 
-  <div class="sidebar">
-    <h2>SERVICE CRM</h2>
+<ul>
+<li>Dashboard</li>
+<li>Customers</li>
+<li>Tickets</li>
+<li>Reports</li>
+</ul>
+</div>
 
-    <ul>
-      <li>Dashboard</li>
-      <li>Customers</li>
-      <li>Service Tickets</li>
-      <li>Reports</li>
-      <li>AMC</li>
-      <li>Settings</li>
-    </ul>
-  </div>
+<div class="main">
 
-  <!-- MAIN -->
+<h1 style="margin-bottom:20px;">Service CRM Dashboard</h1>
 
-  <div class="main">
+<div class="cards">
 
-    <!-- HEADER -->
+<div class="card">
+<h3>Total Tickets</h3>
+<p id="totalTickets">0</p>
+</div>
 
-    <div class="header">
-      <h1>Service Ticket Dashboard</h1>
-    </div>
+<div class="card">
+<h3>Open Tickets</h3>
+<p id="openTickets">0</p>
+</div>
 
-    <!-- CARDS -->
+<div class="card">
+<h3>Closed Tickets</h3>
+<p id="closedTickets">0</p>
+</div>
 
-    <div class="cards">
+</div>
 
-      <div class="card open">
-        <h3>Open Tickets</h3>
-        <p>18</p>
-      </div>
+<div class="form-section">
 
-      <div class="card pending">
-        <h3>Pending Tickets</h3>
-        <p>12</p>
-      </div>
+<h2>Create Customer</h2>
 
-      <div class="card progress">
-        <h3>In Progress</h3>
-        <p>9</p>
-      </div>
+<div class="form-grid">
 
-      <div class="card closed">
-        <h3>Closed Tickets</h3>
-        <p>150</p>
-      </div>
+<input type="text" id="customerName" placeholder="Customer Name">
 
-    </div>
+<input type="text" id="contactNumber" placeholder="Contact Number">
 
-    <!-- CUSTOMER FORM -->
+<input type="text" id="location" placeholder="Location">
 
-    <div class="form-section">
+</div>
 
-      <h2>Create Customer</h2>
+<button onclick="addCustomer()">
+Add Customer
+</button>
 
-      <div class="form-grid">
+</div>
 
-        <input type="text" placeholder="Customer Name">
+<div class="form-section">
 
-        <input type="text" placeholder="Contact Number">
+<h2>Create Service Ticket</h2>
 
-        <input type="text" placeholder="Location">
+<div class="form-grid">
 
-        <input type="email" placeholder="Email Address">
+<input type="text" id="ticketCustomer" placeholder="Customer Name">
 
-      </div>
+<input type="text" id="issue" placeholder="Issue">
 
-      <button>Add Customer</button>
+<select id="status">
 
-    </div>
+<option value="Open">Open</option>
+<option value="Pending">Pending</option>
+<option value="In Progress">In Progress</option>
+<option value="Closed">Closed</option>
 
-    <!-- TICKET FORM -->
+</select>
 
-    <div class="form-section">
+<input type="text" id="engineer" placeholder="Engineer">
 
-      <h2>Create Service Ticket</h2>
+</div>
 
-      <div class="form-grid">
+<button onclick="addTicket()">
+Create Ticket
+</button>
 
-        <input type="text" placeholder="Ticket ID">
+</div>
 
-        <input type="text" placeholder="Customer Name">
+<h2>Recent Tickets</h2>
 
-        <input type="text" placeholder="Issue Title">
+<table>
 
-        <select>
-          <option>Status</option>
-          <option>Open</option>
-          <option>Pending</option>
-          <option>In Progress</option>
-          <option>Closed</option>
-        </select>
+<thead>
 
-      </div>
+<tr>
+<th>ID</th>
+<th>Customer</th>
+<th>Issue</th>
+<th>Status</th>
+<th>Engineer</th>
+</tr>
 
-      <button>Create Ticket</button>
+</thead>
 
-    </div>
+<tbody id="ticketTable">
 
-    <!-- TABLE -->
+</tbody>
 
-    <h2 style="margin-bottom:15px;">Recent Service Tickets</h2>
+</table>
 
-    <table>
+</div>
 
-      <thead>
-        <tr>
-          <th>Ticket ID</th>
-          <th>Customer</th>
-          <th>Issue</th>
-          <th>Status</th>
-          <th>Engineer</th>
-        </tr>
-      </thead>
+<script>
 
-      <tbody>
+let tickets = JSON.parse(localStorage.getItem("tickets")) || [];
 
-        <tr>
-          <td>SRV-1001</td>
-          <td>Arabia Insurance</td>
-          <td>Printer Offline</td>
-          <td>
-            <span class="status status-open">
-              Open
-            </span>
-          </td>
-          <td>Akhil</td>
-        </tr>
+function addCustomer(){
 
-        <tr>
-          <td>SRV-1002</td>
-          <td>APG School</td>
-          <td>Camera Issue</td>
-          <td>
-            <span class="status status-progress">
-              In Progress
-            </span>
-          </td>
-          <td>Godwin</td>
-        </tr>
+alert("Customer Added Successfully");
 
-        <tr>
-          <td>SRV-1003</td>
-          <td>Karami</td>
-          <td>Network Down</td>
-          <td>
-            <span class="status status-pending">
-              Pending
-            </span>
-          </td>
-          <td>Senthil</td>
-        </tr>
+}
 
-        <tr>
-          <td>SRV-1004</td>
-          <td>British Club</td>
-          <td>Software Installation</td>
-          <td>
-            <span class="status status-closed">
-              Closed
-            </span>
-          </td>
-          <td>Akhil</td>
-        </tr>
+function addTicket(){
 
-      </tbody>
+const customer =
+document.getElementById("ticketCustomer").value;
 
-    </table>
+const issue =
+document.getElementById("issue").value;
 
-  </div>
+const status =
+document.getElementById("status").value;
+
+const engineer =
+document.getElementById("engineer").value;
+
+const ticket = {
+
+id: "SRV-" + (tickets.length + 1),
+customer,
+issue,
+status,
+engineer
+
+};
+
+tickets.push(ticket);
+
+localStorage.setItem(
+"tickets",
+JSON.stringify(tickets)
+);
+
+displayTickets();
+
+}
+
+function displayTickets(){
+
+const table =
+document.getElementById("ticketTable");
+
+table.innerHTML = "";
+
+let openCount = 0;
+let closedCount = 0;
+
+tickets.forEach(ticket => {
+
+if(ticket.status === "Open"){
+openCount++;
+}
+
+if(ticket.status === "Closed"){
+closedCount++;
+}
+
+table.innerHTML += `
+
+<tr>
+
+<td>${ticket.id}</td>
+
+<td>${ticket.customer}</td>
+
+<td>${ticket.issue}</td>
+
+<td>
+<span class="status">
+${ticket.status}
+</span>
+</td>
+
+<td>${ticket.engineer}</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("totalTickets").innerText =
+tickets.length;
+
+document.getElementById("openTickets").innerText =
+openCount;
+
+document.getElementById("closedTickets").innerText =
+closedCount;
+
+}
+
+displayTickets();
+
+</script>
 
 </body>
 </html>
+```
