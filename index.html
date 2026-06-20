@@ -1,168 +1,140 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Service CRM</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service CRM V2</title>
 <style>
-body{
-font-family:Arial;
-background:#f5f5f5;
-padding:20px;
-}
-
-.container{
-background:white;
-padding:20px;
-border-radius:10px;
-max-width:1000px;
-margin:auto;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:10px;
-}
-
-button{
-background:#2563eb;
-color:white;
-border:none;
-padding:12px 20px;
-cursor:pointer;
-}
-
-.cards{
-display:flex;
-gap:20px;
-margin-bottom:20px;
-}
-
-.card{
-background:#e5e7eb;
-padding:15px;
-border-radius:8px;
-flex:1;
-text-align:center;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f4f6f9}
+.sidebar{position:fixed;left:0;top:0;width:240px;height:100%;background:#0f172a;color:#fff}
+.logo{padding:20px;font-size:24px;font-weight:bold;border-bottom:1px solid #334155}
+.menu a{display:block;padding:14px 20px;color:#fff;text-decoration:none}
+.menu a:hover{background:#1e293b}
+.main{margin-left:240px;padding:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.card h2{margin:0}
+.section{background:#fff;padding:20px;border-radius:12px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+input,select,textarea{width:100%;padding:10px;margin:8px 0}
+button{background:#2563eb;color:#fff;border:none;padding:10px 16px;border-radius:6px;cursor:pointer}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}
+th{background:#0f172a;color:#fff}
 </style>
-
 </head>
 <body>
+<div class="sidebar">
+<div class="logo">SERVICE CRM</div>
+<div class="menu">
+<a href="#">Dashboard</a>
+<a href="#">Customers</a>
+<a href="#">Tickets</a>
+<a href="#">Reports</a>
+</div>
+</div>
 
-<div class="container">
-
-<h1>Service CRM</h1>
+<div class="main">
+<h1>Dashboard</h1>
 
 <div class="cards">
-
-<div class="card">
-<h3>Open</h3>
-<p id="openCount">0</p>
+<div class="card"><p>Open</p><h2 id="openCount">0</h2></div>
+<div class="card"><p>In Progress</p><h2 id="progressCount">0</h2></div>
+<div class="card"><p>Completed</p><h2 id="completedCount">0</h2></div>
+<div class="card"><p>Total</p><h2 id="totalCount">0</h2></div>
 </div>
 
-<div class="card">
-<h3>In Progress</h3>
-<p id="progressCount">0</p>
-</div>
+<div class="section">
+<h2>Create Service Ticket</h2>
 
-<div class="card">
-<h3>Completed</h3>
-<p id="completedCount">0</p>
-</div>
-
-</div>
-
-<h2>Create Ticket</h2>
-
-<input id="date" type="date">
-
-<input id="companyName"
-placeholder="Company Name">
-
-<input id="issue"
-placeholder="Issue">
-
-<input id="solution"
-placeholder="Solution Provided">
-
-<input id="reportedTime"
-type="time">
-
-<input id="solvingTime"
-type="time">
+<input type="date" id="date">
+<input type="text" id="company" placeholder="Company Name">
+<input type="text" id="issue" placeholder="Issue">
+<textarea id="solution" placeholder="Solution Provided"></textarea>
+<input type="time" id="reported">
+<input type="time" id="solved">
 
 <select id="status">
 <option>Open</option>
 <option>In Progress</option>
-<option>Finished</option>
 <option>Completed</option>
 </select>
 
-<button onclick="saveTicket()">
-Save Ticket
-</button>
+<button onclick="saveTicket()">Save Ticket</button>
+</div>
 
+<div class="section">
+<h2>Ticket List</h2>
+<table id="ticketTable">
+<thead>
+<tr>
+<th>Date</th>
+<th>Company</th>
+<th>Issue</th>
+<th>Solution</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
 </div>
 
 <script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwUp0OfONSLJ9dQwNnWcRvLYqbubVSQYCILdemAT1yrvPk5-NhVg7072m74yolojN8QPQ/exec";
 
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbyZz4KJkPLLzVl8ZLGLSpk6Ch1avmLwziENXNLZCWfpreMQkWWsxymiXZUDr-R4OMT0QQ/exec";
+let tickets=[];
 
-const sheet =
-SpreadsheetApp.getActiveSpreadsheet()
-.getSheetByName("Sheet1");
+function updateDashboard(){
+document.getElementById('openCount').innerText=tickets.filter(t=>t.status==="Open").length;
+document.getElementById('progressCount').innerText=tickets.filter(t=>t.status==="In Progress").length;
+document.getElementById('completedCount').innerText=tickets.filter(t=>t.status==="Completed").length;
+document.getElementById('totalCount').innerText=tickets.length;
+}
+
+function renderTable(){
+const tbody=document.querySelector("#ticketTable tbody");
+tbody.innerHTML="";
+tickets.forEach(t=>{
+tbody.innerHTML+=`<tr>
+<td>${t.date}</td>
+<td>${t.company}</td>
+<td>${t.issue}</td>
+<td>${t.solution}</td>
+<td>${t.status}</td>
+</tr>`;
+});
+}
 
 async function saveTicket(){
-
-const payload = {
-
-date:
-document.getElementById("date").value,
-
-companyName:
-document.getElementById("companyName").value,
-
-issue:
-document.getElementById("issue").value,
-
-solution:
-document.getElementById("solution").value,
-
-reportedTime:
-document.getElementById("reportedTime").value,
-
-solvingTime:
-document.getElementById("solvingTime").value,
-
-status:
-document.getElementById("status").value
-
+const ticket={
+date:date.value,
+companyName:company.value,
+issue:issue.value,
+solution:solution.value,
+reportedTime:reported.value,
+solvingTime:solved.value,
+status:status.value
 };
 
 try{
+await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify(ticket)});
 
-await fetch(SCRIPT_URL,{
-method:"POST",
-body:JSON.stringify(payload)
+tickets.push({
+date:ticket.date,
+company:ticket.companyName,
+issue:ticket.issue,
+solution:ticket.solution,
+status:ticket.status
 });
 
+renderTable();
+updateDashboard();
 alert("Ticket Saved Successfully");
-
-}catch(error){
-
+}catch(e){
 alert("Error Saving Ticket");
-
 }
-
 }
-
 </script>
-
 </body>
 </html>
-```
