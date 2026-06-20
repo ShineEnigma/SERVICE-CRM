@@ -111,7 +111,11 @@ Save Ticket
 <script>
 
 const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwUp0OfONSLJ9dQwNnWcRvLYqbubVSQYCILdemAT1yrvPk5-NhVg7072m74yolojN8QPQ/exec";
+"https://script.google.com/macros/s/AKfycbyZz4KJkPLLzVl8ZLGLSpk6Ch1avmLwziENXNLZCWfpreMQkWWsxymiXZUDr-R4OMT0QQ/exec";
+
+const sheet =
+SpreadsheetApp.getActiveSpreadsheet()
+.getSheetByName("Sheet1");
 
 async function saveTicket(){
 
