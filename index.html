@@ -1,306 +1,161 @@
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Service CRM Dashboard</title>
+<meta charset="utf-8">
+<title>Service CRM</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
-display:flex;
-background:#f3f4f6;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:240px;
-height:100vh;
-background:#111827;
-color:white;
+font-family:Arial;
+background:#f5f5f5;
 padding:20px;
-position:fixed;
 }
 
-.sidebar h2{
-margin-bottom:30px;
-color:#00c3ff;
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+max-width:1000px;
+margin:auto;
 }
 
-.sidebar ul{
-list-style:none;
-}
-
-.sidebar ul li{
-padding:15px;
+input,select{
+width:100%;
+padding:10px;
+margin-top:10px;
 margin-bottom:10px;
-background:#1f2937;
-border-radius:8px;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:12px 20px;
 cursor:pointer;
 }
 
-/* MAIN */
-
-.main{
-margin-left:240px;
-padding:20px;
-width:100%;
-}
-
 .cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+display:flex;
 gap:20px;
-margin-bottom:30px;
+margin-bottom:20px;
 }
 
 .card{
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-.card h3{
-margin-bottom:10px;
-}
-
-.card p{
-font-size:30px;
-font-weight:bold;
-}
-
-.form-section{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:30px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-table th{
-background:#111827;
-color:white;
+background:#e5e7eb;
 padding:15px;
-text-align:left;
+border-radius:8px;
+flex:1;
+text-align:center;
 }
-
-table td{
-padding:15px;
-border-bottom:1px solid #ddd;
-}
-
-.status{
-padding:5px 10px;
-border-radius:5px;
-color:white;
-font-size:12px;
-}
-
-.open{
-background:red;
-}
-
-.pending{
-background:orange;
-}
-
-.progress{
-background:blue;
-}
-
-.closed{
-background:green;
-}
-
 </style>
 
 </head>
-
 <body>
 
-<!-- SIDEBAR -->
+<div class="container">
 
-<div class="sidebar">
-
-<h2>SERVICE CRM</h2>
-
-<ul>
-<li>Dashboard</li>
-<li>Customers</li>
-<li>Tickets</li>
-<li>Reports</li>
-</ul>
-
-</div>
-
-<!-- MAIN -->
-
-<div class="main">
-
-<h1 style="margin-bottom:20px;">
-Service CRM Dashboard
-</h1>
-
-<!-- DASHBOARD CARDS -->
+<h1>Service CRM</h1>
 
 <div class="cards">
 
 <div class="card">
-<h3>Total Tickets</h3>
-<p id="totalTickets">0</p>
+<h3>Open</h3>
+<p id="openCount">0</p>
 </div>
 
 <div class="card">
-<h3>Open Tickets</h3>
-<p id="openTickets">0</p>
+<h3>In Progress</h3>
+<p id="progressCount">0</p>
 </div>
 
 <div class="card">
-<h3>Pending Tickets</h3>
-<p id="pendingTickets">0</p>
-</div>
-
-<div class="card">
-<h3>Closed Tickets</h3>
-<p id="closedTickets">0</p>
+<h3>Completed</h3>
+<p id="completedCount">0</p>
 </div>
 
 </div>
 
-<!-- TICKET TABLE -->
+<h2>Create Ticket</h2>
 
-<div class="form-section">
+<input id="date" type="date">
 
-<h2 style="margin-bottom:20px;">
-Live Service Tickets
-</h2>
+<input id="companyName"
+placeholder="Company Name">
 
-<table>
+<input id="issue"
+placeholder="Issue">
 
-<thead>
+<input id="solution"
+placeholder="Solution Provided">
 
-<tr>
+<input id="reportedTime"
+type="time">
 
-<th>Ticket ID</th>
-<th>Customer</th>
-<th>Issue</th>
-<th>Status</th>
-<th>Engineer</th>
+<input id="solvingTime"
+type="time">
 
-</tr>
+<select id="status">
+<option>Open</option>
+<option>In Progress</option>
+<option>Finished</option>
+<option>Completed</option>
+</select>
 
-</thead>
-
-<tbody id="ticketTable">
-
-</tbody>
-
-</table>
-
-</div>
+<button onclick="saveTicket()">
+Save Ticket
+</button>
 
 </div>
 
 <script>
 
-/* GOOGLE SHEET JSON API */
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwUp0OfONSLJ9dQwNnWcRvLYqbubVSQYCILdemAT1yrvPk5-NhVg7072m74yolojN8QPQ/exec";
 
-const SHEET_URL =
-"https://opensheet.elk.sh/2PACX-1vS_heclkI8_qaIdp8Bx1vA140Y54Xf6t44OJg9IzV4ozxS7Hwtkosc_ERJGdEKny2_nT4NmXOZtzu3w/Sheet1";
+async function saveTicket(){
 
-async function loadTickets(){
+const payload = {
 
-const response = await fetch(SHEET_URL);
+date:
+document.getElementById("date").value,
 
-const data = await response.json();
+companyName:
+document.getElementById("companyName").value,
 
-const table =
-document.getElementById("ticketTable");
+issue:
+document.getElementById("issue").value,
 
-table.innerHTML = "";
+solution:
+document.getElementById("solution").value,
 
-let openCount = 0;
-let pendingCount = 0;
-let closedCount = 0;
+reportedTime:
+document.getElementById("reportedTime").value,
 
-data.forEach(ticket => {
+solvingTime:
+document.getElementById("solvingTime").value,
 
-const status =
-(ticket.Status || "").toLowerCase();
+status:
+document.getElementById("status").value
 
-if(status === "open"){
-openCount++;
-}
+};
 
-if(status === "pending"){
-pendingCount++;
-}
+try{
 
-if(status === "closed"){
-closedCount++;
-}
-
-table.innerHTML += `
-
-<tr>
-
-<td>${ticket["Ticket ID"] || ""}</td>
-
-<td>${ticket.Customer || ""}</td>
-
-<td>${ticket.Issue || ""}</td>
-
-<td>
-
-<span class="status ${status}">
-${ticket.Status || ""}
-
-</span>
-
-</td>
-
-<td>${ticket.Engineer || ""}</td>
-
-</tr>
-
-`;
-
+await fetch(SCRIPT_URL,{
+method:"POST",
+body:JSON.stringify(payload)
 });
 
-document.getElementById("totalTickets").innerText =
-data.length;
+alert("Ticket Saved Successfully");
 
-document.getElementById("openTickets").innerText =
-openCount;
+}catch(error){
 
-document.getElementById("pendingTickets").innerText =
-pendingCount;
-
-document.getElementById("closedTickets").innerText =
-closedCount;
+alert("Error Saving Ticket");
 
 }
 
-loadTickets();
+}
 
 </script>
 
