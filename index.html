@@ -3,69 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Service CRM V2</title>
+
+<title>Veltrox Technologies W.L.L. - Service CRM</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f4f6f9}
-.sidebar{position:fixed;left:0;top:0;width:240px;height:100%;background:#0f172a;color:#fff}
-.logo{padding:20px;font-size:24px;font-weight:bold;border-bottom:1px solid #334155}
-.menu a{display:block;padding:14px 20px;color:#fff;text-decoration:none}
-.menu a:hover{background:#1e293b}
-.main{margin-left:240px;padding:20px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
-.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.card h2{margin:0}
-.section{background:#fff;padding:20px;border-radius:12px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-input,select,textarea{width:100%;padding:10px;margin:8px 0}
-button{background:#2563eb;color:#fff;border:none;padding:10px 16px;border-radius:6px;cursor:pointer}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}
-th{background:#0f172a;color:#fff}
+body{
+margin:0;
+font-family:Segoe UI,Arial,sans-serif;
+background:#f4f7fc;
+}
+
+.header{
+background:#0b3d91;
+color:white;
+padding:20px;
+font-size:28px;
+font-weight:bold;
+}
+
+.container{
+padding:20px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+text-align:center;
+}
+
+.card h2{
+margin:0;
+color:#0b3d91;
+}
+
+.card p{
+font-size:28px;
+font-weight:bold;
+}
+
+.section{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+background:#0b3d91;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#082d6b;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#0b3d91;
+color:white;
+padding:10px;
+}
+
+td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+.search{
+margin-bottom:15px;
+}
 </style>
 </head>
+
 <body>
-<div class="sidebar">
-<div class="logo">SERVICE CRM</div>
-<div class="menu">
-<a href="#">Dashboard</a>
-<a href="#">Customers</a>
-<a href="#">Tickets</a>
-<a href="#">Reports</a>
-</div>
+
+<div class="header">
+Veltrox Technologies W.L.L. - Service CRM
 </div>
 
-<div class="main">
-<h1>Dashboard</h1>
+<div class="container">
 
 <div class="cards">
-<div class="card"><p>Open</p><h2 id="openCount">0</h2></div>
-<div class="card"><p>In Progress</p><h2 id="progressCount">0</h2></div>
-<div class="card"><p>Completed</p><h2 id="completedCount">0</h2></div>
-<div class="card"><p>Total</p><h2 id="totalCount">0</h2></div>
+
+<div class="card">
+<h2>Total Tickets</h2>
+<p id="total">0</p>
+</div>
+
+<div class="card">
+<h2>Open</h2>
+<p id="open">0</p>
+</div>
+
+<div class="card">
+<h2>In Progress</h2>
+<p id="progress">0</p>
+</div>
+
+<div class="card">
+<h2>Completed</h2>
+<p id="completed">0</p>
+</div>
+
 </div>
 
 <div class="section">
+
 <h2>Create Service Ticket</h2>
 
 <input type="date" id="date">
+
 <input type="text" id="company" placeholder="Company Name">
+
 <input type="text" id="issue" placeholder="Issue">
+
 <textarea id="solution" placeholder="Solution Provided"></textarea>
-<input type="time" id="reported">
-<input type="time" id="solved">
+
+<input type="time" id="reportedTime">
+
+<input type="time" id="solvingTime">
 
 <select id="status">
 <option>Open</option>
 <option>In Progress</option>
+<option>Pending</option>
 <option>Completed</option>
 </select>
 
 <button onclick="saveTicket()">Save Ticket</button>
+
 </div>
 
 <div class="section">
-<h2>Ticket List</h2>
+
+<h2>Service Tickets</h2>
+
+<input class="search" type="text" id="search" placeholder="Search Company..." onkeyup="filterTable()">
+
 <table id="ticketTable">
+
 <thead>
 <tr>
 <th>Date</th>
@@ -75,66 +179,119 @@ th{background:#0f172a;color:#fff}
 <th>Status</th>
 </tr>
 </thead>
+
 <tbody></tbody>
+
 </table>
+
 </div>
+
 </div>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwUp0OfONSLJ9dQwNnWcRvLYqbubVSQYCILdemAT1yrvPk5-NhVg7072m74yolojN8QPQ/exec";
+
+const API_URL="https://script.google.com/macros/s/AKfycby2JshFZdpOoW1pWzRTFZwNDk7T3SUpsQ0Xw0clpNeI7QLo-XH2CJ2RYLLIsWhrxW4udw/exec";
 
 let tickets=[];
 
-function updateDashboard(){
-document.getElementById('openCount').innerText=tickets.filter(t=>t.status==="Open").length;
-document.getElementById('progressCount').innerText=tickets.filter(t=>t.status==="In Progress").length;
-document.getElementById('completedCount').innerText=tickets.filter(t=>t.status==="Completed").length;
-document.getElementById('totalCount').innerText=tickets.length;
-}
-
-function renderTable(){
-const tbody=document.querySelector("#ticketTable tbody");
-tbody.innerHTML="";
-tickets.forEach(t=>{
-tbody.innerHTML+=`<tr>
-<td>${t.date}</td>
-<td>${t.company}</td>
-<td>${t.issue}</td>
-<td>${t.solution}</td>
-<td>${t.status}</td>
-</tr>`;
-});
-}
-
-async function saveTicket(){
-const ticket={
-date:date.value,
-companyName:company.value,
-issue:issue.value,
-solution:solution.value,
-reportedTime:reported.value,
-solvingTime:solved.value,
-status:status.value
-};
+async function loadTickets(){
 
 try{
-await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify(ticket)});
 
-tickets.push({
-date:ticket.date,
-company:ticket.companyName,
-issue:ticket.issue,
-solution:ticket.solution,
-status:ticket.status
-});
+const response=await fetch(API_URL);
+tickets=await response.json();
 
 renderTable();
 updateDashboard();
-alert("Ticket Saved Successfully");
-}catch(e){
-alert("Error Saving Ticket");
+
+}catch(error){
+
+console.log(error);
+
 }
+
 }
+
+function renderTable(){
+
+const tbody=document.querySelector("#ticketTable tbody");
+
+tbody.innerHTML="";
+
+tickets.forEach(t=>{
+
+tbody.innerHTML+=`
+<tr>
+<td>${t.date || ''}</td>
+<td>${t.companyName || ''}</td>
+<td>${t.issue || ''}</td>
+<td>${t.solution || ''}</td>
+<td>${t.status || ''}</td>
+</tr>
+`;
+
+});
+
+}
+
+function updateDashboard(){
+
+document.getElementById("total").innerText=tickets.length;
+
+document.getElementById("open").innerText=
+tickets.filter(x=>x.status==="Open").length;
+
+document.getElementById("progress").innerText=
+tickets.filter(x=>x.status==="In Progress").length;
+
+document.getElementById("completed").innerText=
+tickets.filter(x=>x.status==="Completed").length;
+
+}
+
+async function saveTicket(){
+
+const data={
+date:document.getElementById("date").value,
+companyName:document.getElementById("company").value,
+issue:document.getElementById("issue").value,
+solution:document.getElementById("solution").value,
+reportedTime:document.getElementById("reportedTime").value,
+solvingTime:document.getElementById("solvingTime").value,
+status:document.getElementById("status").value
+};
+
+await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify(data)
+});
+
+alert("Ticket Saved");
+
+loadTickets();
+
+}
+
+function filterTable(){
+
+let value=document.getElementById("search").value.toLowerCase();
+
+let rows=document.querySelectorAll("#ticketTable tbody tr");
+
+rows.forEach(row=>{
+
+row.style.display=
+row.innerText.toLowerCase().includes(value)
+? ""
+: "none";
+
+});
+
+}
+
+loadTickets();
+
 </script>
+
 </body>
 </html>
